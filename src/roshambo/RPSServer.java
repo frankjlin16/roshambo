@@ -1,5 +1,16 @@
 package roshambo;
 
+/**
+ * Roshambo game server.
+ * 
+ * A server that listens for connections from clients and plays a game of Roshambo
+ * 
+ * @author Frank Lin
+ * @version 1.0
+ * @see RPSClient
+ */
+ 
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,13 +27,18 @@ import javafx.stage.Stage;
 public class RPSServer extends Application {
     private int connections = 1;
 
-    // Status codes
+    /** Status indicating player 1 */
     public static int PLAYER1 = 1; // Indicate player 1
+    /** Status indicating player 2 */
     public static int PLAYER2 = 2; // Indicate player 2
+    /** Status indicating player 1 won */
     public static int PLAYER1_WON = 3; // Indicate player 1 won
+    /** Status indicating player 2 won */
     public static int PLAYER2_WON = 4; // Indicate player 2 won
+    /** Status indicating a draw */
     public static int DRAW = 5; // Indicate a draw
 
+    /** Construct the GUI and start the game server */
     @Override
     public void start(Stage primaryStage) {
         TextArea serverLog = new TextArea();
@@ -63,6 +79,7 @@ public class RPSServer extends Application {
         }).start();
     }
 
+    /** Handle a session between two players */
     class HandleSession implements Runnable {
 
         private Socket player1;
@@ -75,11 +92,13 @@ public class RPSServer extends Application {
         private int player1Choice;
         private int player2Choice;
 
+        /** Constructor */
         public HandleSession(Socket player1, Socket player2) {
             this.player1 = player1;
             this.player2 = player2;
         }
 
+        /** Run the session */
         @Override
         public void run() {
             try {
@@ -138,6 +157,7 @@ public class RPSServer extends Application {
 
         }
 
+        /** Send choice to player */
         private void sendChoice(DataOutputStream out, int choice) {
             try {
                 out.writeInt(choice);

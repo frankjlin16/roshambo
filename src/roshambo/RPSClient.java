@@ -1,5 +1,15 @@
 package roshambo;
 
+/**
+ * Roshambo game client.
+ *
+ * A client that connects to a server and plays a game of Roshambo
+ * 
+ * @author Frank Lin
+ * @version 1.0
+ * @see RPSServer
+ */
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -22,31 +32,35 @@ import javafx.stage.Stage;
 
 public class RPSClient extends Application {
 
-    // Status codes
+    /** Status indicating player 1 */
     public static int PLAYER1 = 1; // Indicate player 1
+    /** Status indicating player 2 */
     public static int PLAYER2 = 2; // Indicate player 2
+    /** Status indicating player 1 won */
     public static int PLAYER1_WON = 3; // Indicate player 1 won
+    /** Status indicating player 2 won */
     public static int PLAYER2_WON = 4; // Indicate player 2 won
+    /** Status indicating a draw */
     public static int DRAW = 5; // Indicate a draw
 
     // Core variables
-    Choice myChoice;
-    Choice opponentChoice;
-    String choices[] = { "Rock", "Paper", "Scissors" };
-    boolean isActive = true;
+    private Choice myChoice;
+    private Choice opponentChoice;
+    private String choices[] = { "Rock", "Paper", "Scissors" };
+    private boolean isActive = true;
 
     // IO variables
-    DataInputStream fromServer;
-    DataOutputStream toServer;
-    String host = "localhost";
+    private DataInputStream fromServer;
+    private DataOutputStream toServer;
+    private String host = "localhost";
 
     // GUI variables
-    Label message = new Label();
-    StackPane opponentStack;
-    Text opponentText;
-    Label playerLabel = new Label();
+    private Label message = new Label();
+    private StackPane opponentStack;
+    private Text opponentText;
+    private Label playerLabel = new Label();
     
-
+    /** Construct the GUI and start the game client */
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -103,6 +117,7 @@ public class RPSClient extends Application {
         connectToServer();
     }
 
+    /** Handles the button click */
     private void handleButtonClick() {
         // Send choice to server
         try {
@@ -112,6 +127,7 @@ public class RPSClient extends Application {
         }
     }
 
+    /** Connect to server */
     private void connectToServer() {
         try {
             Socket socket = new Socket(host, 8000);
@@ -146,15 +162,18 @@ public class RPSClient extends Application {
         }).start();
     }
 
+    /** Send player choice to server */
     private void sendChoice() throws IOException {
         toServer.writeInt(myChoice.getChoice());
     }
 
+    /** Receive opponent choice from server */
     private void receiveChoice() throws IOException {
         opponentChoice = new Choice(fromServer.readInt());
         Platform.runLater(() -> opponentText.setText(choices[opponentChoice.getChoice()]));
     }
 
+    /** Receive status from server */
     private void receiveFromServer() throws IOException{
         // Receive game status
         int status = fromServer.readInt();
@@ -178,9 +197,11 @@ public class RPSClient extends Application {
         launch();
     }
 
+    /** Choice class: describing the choices */
     class Choice extends Rectangle {
         private int choice;
 
+        /** Constructor */
         public Choice(int choice) {
             super(100, 60, Color.TRANSPARENT);
             this.setStroke(Color.BLACK);
@@ -188,14 +209,17 @@ public class RPSClient extends Application {
             this.setOnMouseClicked(e -> handleMouseClicked());
         }
 
+        /** Get choice */
         public int getChoice() {
             return choice;
         }
 
+        /** Set choice */
         public void setChoice(int choice) {
             this.choice = choice;
         }
 
+        /** Outline the choice when selected */
         protected void outline(int x) {
             if (x == 0) {
                 this.setStroke(Color.BLACK);
@@ -204,6 +228,7 @@ public class RPSClient extends Application {
             }
         }
 
+        /** Handle mouse click */
         private void handleMouseClicked() {
             if (myChoice != null) {
                 myChoice.outline(0);
