@@ -1,16 +1,5 @@
 package roshambo;
 
-/**
- * Roshambo game server.
- * 
- * A server that listens for connections from clients and plays a game of Roshambo
- * 
- * @author Frank Lin
- * @version 1.0
- * @see RPSClient
- */
- 
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -24,6 +13,16 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+/**
+ * Roshambo game server.
+ * 
+ * A server that listens for connections from clients and plays a game of
+ * Roshambo
+ * 
+ * @author Frank Lin
+ * @version 1.0
+ * @see RPSClient
+ */
 public class RPSServer extends Application {
     private int connections = 1;
 

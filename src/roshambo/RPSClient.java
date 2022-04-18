@@ -1,15 +1,5 @@
 package roshambo;
 
-/**
- * Roshambo game client.
- *
- * A client that connects to a server and plays a game of Roshambo
- * 
- * @author Frank Lin
- * @version 1.0
- * @see RPSServer
- */
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -30,6 +20,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * Roshambo game client.
+ *
+ * A client that connects to a server and plays a game of Roshambo
+ * 
+ * @author Frank Lin
+ * @version 1.0
+ * @see RPSServer
+ */
 public class RPSClient extends Application {
 
     /** Status indicating player 1 */
@@ -59,7 +58,7 @@ public class RPSClient extends Application {
     private StackPane opponentStack;
     private Text opponentText;
     private Label playerLabel = new Label();
-    
+
     /** Construct the GUI and start the game client */
     @Override
     public void start(Stage stage) throws IOException {
@@ -174,7 +173,7 @@ public class RPSClient extends Application {
     }
 
     /** Receive status from server */
-    private void receiveFromServer() throws IOException{
+    private void receiveFromServer() throws IOException {
         // Receive game status
         int status = fromServer.readInt();
 
