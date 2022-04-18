@@ -65,6 +65,9 @@ public class RPSServer extends Application {
         private DataOutputStream out1;
         private DataOutputStream out2;
 
+        private int player1Choice;
+        private int player2Choice;
+
         public HandleSession(Socket player1, Socket player2) {
             this.player1 = player1;
             this.player2 = player2;
@@ -72,13 +75,42 @@ public class RPSServer extends Application {
 
         @Override
         public void run() {
-            // TODO Auto-generated method stub
+            try {
+                // Create input streams and output streams
+                in1 = new DataInputStream(player1.getInputStream());
+                in2 = new DataInputStream(player2.getInputStream());
+                out1 = new DataOutputStream(player1.getOutputStream());
+                out2 = new DataOutputStream(player2.getOutputStream());
+
+                // Get player1's choice
+                player1Choice = in1.readInt();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }
 
+        private void sendChoice(DataOutputStream out, int choice) {
+            try {
+                out.writeInt(choice);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
         private boolean hasWon() {
-            // TODO Auto-generated method stub
-            return false;
+            if (player1Choice == player2Choice) {
+                return false;
+            } else if (player1Choice == 0 && player2Choice == 2) {
+                return true;
+            } else if (player1Choice == 1 && player2Choice == 0) {
+                return true;
+            } else if (player1Choice == 2 && player2Choice == 1) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
     }
