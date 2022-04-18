@@ -1,4 +1,4 @@
-package roshambo.roshambo;
+package roshambo;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.util.Timer;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
@@ -29,8 +29,7 @@ public class RPSClient extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(RPSClient.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        Scene scene = new Scene(new BorderPane(), 320, 240);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();

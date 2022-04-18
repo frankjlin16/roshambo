@@ -1,4 +1,4 @@
-package roshambo.roshambo;
+package roshambo;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
