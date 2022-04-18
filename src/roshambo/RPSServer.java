@@ -37,7 +37,10 @@ public class RPSServer extends Application {
     /** Status indicating a draw */
     public static int DRAW = 5; // Indicate a draw
 
-    /** Construct the GUI and start the game server */
+    /** Construct the GUI and start the game server
+     * 
+     * @param primaryStage the stage to show the GUI on
+     */
     @Override
     public void start(Stage primaryStage) {
         TextArea serverLog = new TextArea();

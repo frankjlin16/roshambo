@@ -59,7 +59,12 @@ public class RPSClient extends Application {
     private Text opponentText;
     private Label playerLabel = new Label();
 
-    /** Construct the GUI and start the game client */
+    /** Construct the GUI and start the game client 
+     * 
+     * @param stage the stage to display the client
+     * @throws IOException if the client cannot connect to the server
+     *
+    */
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -192,6 +197,9 @@ public class RPSClient extends Application {
 
     }
 
+    /** Main method
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         launch();
     }
