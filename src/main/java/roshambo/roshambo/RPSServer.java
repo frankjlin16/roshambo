@@ -4,17 +4,18 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
+import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class RPSServer {
+public class RPSServer extends Application {
     private int connections = 1;
 
     public void start(Stage primaryStage) {
 
         // Create scene and add to stage
-        Scene scene = new Scene(new BorderPane(), 400, 400);
+        Scene scene = new Scene(new BorderPane(), 600, 600);
         primaryStage.setTitle("RPS Server");
         primaryStage.setScene(scene);
         primaryStage.show();
