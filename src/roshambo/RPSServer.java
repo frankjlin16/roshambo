@@ -2,9 +2,12 @@ package roshambo;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
@@ -21,6 +24,36 @@ public class RPSServer extends Application {
         primaryStage.setTitle("RPS Server");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        new Thread(() -> {
+            try {
+                // Create server socket
+                ServerSocket serverSocket = new ServerSocket(8000);
+                Platform.runLater(() -> serverLog.appendText("Server started\n"));
+
+                // Accept connections
+                while (true) {
+                    // Connect player1
+                    Socket player1 = serverSocket.accept();
+                    Platform.runLater(() -> serverLog.appendText("Player 1 connected\n"));
+
+                    // Let player1 know they are connected and waiting
+                    new DataOutputStream(player1.getOutputStream()).writeInt(1);
+
+                    // Connect player2
+                    Socket player2 = serverSocket.accept();
+                    Platform.runLater(() -> serverLog.appendText("Player 2 connected\n"));
+
+                    // Let player2 know they are connected and game started
+                    new DataOutputStream(player2.getOutputStream()).writeInt(2);
+
+                    // Create new thread to handle both players
+                    new Thread(new HandleSession(player1, player2)).start();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     class HandleSession implements Runnable {

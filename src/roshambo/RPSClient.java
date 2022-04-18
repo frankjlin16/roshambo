@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -96,10 +97,22 @@ public class RPSClient extends Application {
         // Start thread to listen for server messages
         new Thread(() -> {
             try {
+                int status = fromServer.readInt();
+                if (status == 1) {
+                    Platform.runLater(() -> message.setText("Waiting for opponent..."));
+                } else if (status == 2) {
+                    Platform.runLater(() -> message.setText("Opponent connected, game started!"));
+                }
+
+                // Game loop
+                while (myChoice == null || opponentChoice == null) {
+                    
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
+        }).start();
     }
 
     private void sendChoice() {
