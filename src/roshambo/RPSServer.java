@@ -16,6 +16,13 @@ import javafx.stage.Stage;
 public class RPSServer extends Application {
     private int connections = 1;
 
+    // Status codes
+    public static int PLAYER1 = 1; // Indicate player 1
+    public static int PLAYER2 = 2; // Indicate player 2
+    public static int PLAYER1_WON = 3; // Indicate player 1 won
+    public static int PLAYER2_WON = 4; // Indicate player 2 won
+    public static int DRAW = 5; // Indicate a draw
+
     @Override
     public void start(Stage primaryStage) {
         TextArea serverLog = new TextArea();
@@ -38,14 +45,14 @@ public class RPSServer extends Application {
                     Platform.runLater(() -> serverLog.appendText("Player 1 connected\n"));
 
                     // Let player1 know they are connected and waiting
-                    new DataOutputStream(player1.getOutputStream()).writeInt(1);
+                    new DataOutputStream(player1.getOutputStream()).writeInt(PLAYER1);
 
                     // Connect player2
                     Socket player2 = serverSocket.accept();
                     Platform.runLater(() -> serverLog.appendText("Player 2 connected\n"));
 
                     // Let player2 know they are connected and game started
-                    new DataOutputStream(player2.getOutputStream()).writeInt(2);
+                    new DataOutputStream(player2.getOutputStream()).writeInt(PLAYER2);
 
                     // Create new thread to handle both players
                     new Thread(new HandleSession(player1, player2)).start();
@@ -82,8 +89,46 @@ public class RPSServer extends Application {
                 out1 = new DataOutputStream(player1.getOutputStream());
                 out2 = new DataOutputStream(player2.getOutputStream());
 
-                // Get player1's choice
-                player1Choice = in1.readInt();
+                // Game loop
+                while (true) {
+                    // Receive player1 choice
+                    player1Choice = in1.readInt();
+                    // Receive player2 choice
+                    player2Choice = in2.readInt();
+
+                    if (player1Choice == player2Choice) {
+                        // Send draw message
+                        out1.writeInt(DRAW);
+                        out2.writeInt(DRAW);
+                        sendChoice(out2, player1Choice);
+                        sendChoice(out1, player2Choice);
+                        break;
+                    } else if (player1Choice == 0 && player2Choice == 2) {
+                        out1.writeInt(PLAYER1_WON);
+                        out2.writeInt(PLAYER1_WON);
+                        sendChoice(out2, player1Choice);
+                        sendChoice(out1, player2Choice);
+                        break;
+                    } else if (player1Choice == 1 && player2Choice == 0) {
+                        out1.writeInt(PLAYER1_WON);
+                        out2.writeInt(PLAYER1_WON);
+                        sendChoice(out2, player1Choice);
+                        sendChoice(out1, player2Choice);
+                        break;
+                    } else if (player1Choice == 2 && player2Choice == 1) {
+                        out1.writeInt(PLAYER1_WON);
+                        out2.writeInt(PLAYER1_WON);
+                        sendChoice(out2, player1Choice);
+                        sendChoice(out1, player2Choice);
+                        break;
+                    } else {
+                        out1.writeInt(PLAYER2_WON);
+                        out2.writeInt(PLAYER2_WON);
+                        sendChoice(out2, player1Choice);
+                        sendChoice(out1, player2Choice);
+                        break;
+                    }
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -98,11 +143,8 @@ public class RPSServer extends Application {
             }
         }
 
-
         private boolean hasWon() {
-            if (player1Choice == player2Choice) {
-                return false;
-            } else if (player1Choice == 0 && player2Choice == 2) {
+            if (player1Choice == 0 && player2Choice == 2) {
                 return true;
             } else if (player1Choice == 1 && player2Choice == 0) {
                 return true;

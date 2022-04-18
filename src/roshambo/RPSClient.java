@@ -22,6 +22,13 @@ import javafx.stage.Stage;
 
 public class RPSClient extends Application {
 
+    // Status codes
+    public static int PLAYER1 = 1; // Indicate player 1
+    public static int PLAYER2 = 2; // Indicate player 2
+    public static int PLAYER1_WON = 3; // Indicate player 1 won
+    public static int PLAYER2_WON = 4; // Indicate player 2 won
+    public static int DRAW = 5; // Indicate a draw
+
     // Core variables
     Choice myChoice;
     Choice opponentChoice;
@@ -59,7 +66,7 @@ public class RPSClient extends Application {
         border.setBottom(bottomGrid);
         BorderPane.setMargin(bottomGrid, new Insets(10));
         BorderPane.setAlignment(bottomGrid, Pos.CENTER);
-        
+
         // Add oppenent rectangle
         Rectangle opponent = new Rectangle(100, 60, Color.TRANSPARENT);
         opponent.setStroke(Color.BLACK);
@@ -98,15 +105,15 @@ public class RPSClient extends Application {
         new Thread(() -> {
             try {
                 int status = fromServer.readInt();
-                if (status == 1) {
+                if (status == PLAYER1) {
                     Platform.runLater(() -> message.setText("Waiting for opponent..."));
-                } else if (status == 2) {
+                } else if (status == PLAYER2) {
                     Platform.runLater(() -> message.setText("Opponent connected, game started!"));
                 }
 
                 // Game loop
                 while (myChoice == null || opponentChoice == null) {
-                    
+
                 }
 
             } catch (Exception e) {
