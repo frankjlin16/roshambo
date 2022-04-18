@@ -89,6 +89,9 @@ public class RPSServer extends Application {
                 out1 = new DataOutputStream(player1.getOutputStream());
                 out2 = new DataOutputStream(player2.getOutputStream());
 
+                // Let player1 know game started
+                out1.writeInt(PLAYER1);
+
                 // Game loop
                 while (true) {
                     // Receive player1 choice
@@ -142,18 +145,5 @@ public class RPSServer extends Application {
                 e.printStackTrace();
             }
         }
-
-        private boolean hasWon() {
-            if (player1Choice == 0 && player2Choice == 2) {
-                return true;
-            } else if (player1Choice == 1 && player2Choice == 0) {
-                return true;
-            } else if (player1Choice == 2 && player2Choice == 1) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-
     }
 }

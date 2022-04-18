@@ -33,6 +33,7 @@ public class RPSClient extends Application {
     Choice myChoice;
     Choice opponentChoice;
     String choices[] = { "Rock", "Paper", "Scissors" };
+    boolean isActive = true;
 
     // IO variables
     DataInputStream fromServer;
@@ -41,6 +42,9 @@ public class RPSClient extends Application {
 
     // GUI variables
     Label message = new Label();
+    StackPane opponentStack;
+    Text opponentText;
+    
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -68,11 +72,13 @@ public class RPSClient extends Application {
         BorderPane.setAlignment(bottomGrid, Pos.CENTER);
 
         // Add oppenent rectangle
-        Rectangle opponent = new Rectangle(100, 60, Color.TRANSPARENT);
-        opponent.setStroke(Color.BLACK);
-        border.setTop(opponent);
-        BorderPane.setMargin(opponent, new Insets(20));
-        BorderPane.setAlignment(opponent, Pos.CENTER);
+        opponentStack = new StackPane();
+        opponentText = new Text("- - -");
+        opponentChoice = new Choice(0);
+        opponentStack.getChildren().addAll(opponentText, opponentChoice);
+        border.setTop(opponentStack);
+        BorderPane.setMargin(opponentStack, new Insets(20));
+        BorderPane.setAlignment(opponentStack, Pos.CENTER);
 
         // Create the message in the center
         border.setCenter(message);
@@ -107,13 +113,21 @@ public class RPSClient extends Application {
                 int status = fromServer.readInt();
                 if (status == PLAYER1) {
                     Platform.runLater(() -> message.setText("Waiting for opponent..."));
-                } else if (status == PLAYER2) {
+                    fromServer.readInt(); // Read opponent choice
                     Platform.runLater(() -> message.setText("Opponent connected, game started!"));
+                } else if (status == PLAYER2) {
+                    Platform.runLater(() -> message.setText("Connected, game started!"));
                 }
 
                 // Game loop
-                while (myChoice == null || opponentChoice == null) {
-
+                while (isActive) {
+                    if (myChoice != null) {
+                        sendChoice();
+                        receiveFromServer();
+                    } else if (opponentChoice != null) {
+                        receiveFromServer();
+                        sendChoice();
+                    }
                 }
 
             } catch (Exception e) {
@@ -122,15 +136,33 @@ public class RPSClient extends Application {
         }).start();
     }
 
-    private void sendChoice() {
-
+    private void sendChoice() throws IOException {
+        toServer.writeInt(myChoice.getChoice());
     }
 
-    private void receiveChoice() {
-
+    private void receiveChoice() throws IOException {
+        opponentChoice = new Choice(fromServer.readInt());
+        Platform.runLater(() -> opponentText.setText(choices[opponentChoice.getChoice()]));
     }
 
-    private void receiveFromServer() {
+    private void receiveFromServer() throws IOException{
+        // Receive game status
+        int status = fromServer.readInt();
+
+        receiveChoice();
+
+        if (status == PLAYER1_WON) {
+            Platform.runLater(() -> message.setText("Player 1 won!"));
+            isActive = false;
+        } else if (status == PLAYER2_WON) {
+            Platform.runLater(() -> message.setText("Player 2 won!"));
+            isActive = false;
+        } else if (status == DRAW) {
+            Platform.runLater(() -> message.setText("Draw!"));
+            isActive = false;
+        } else {
+            sendChoice();
+        }
 
     }
 
