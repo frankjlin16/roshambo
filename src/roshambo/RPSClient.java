@@ -44,6 +44,7 @@ public class RPSClient extends Application {
     Label message = new Label();
     StackPane opponentStack;
     Text opponentText;
+    Label playerLabel = new Label();
     
 
     @Override
@@ -83,8 +84,12 @@ public class RPSClient extends Application {
         // Create the message in the center
         border.setCenter(message);
 
+        // Add player label
+        border.setLeft(playerLabel);
+
         // Add button to side
         Button confirmButton = new Button("Confirm");
+        confirmButton.setOnAction(e -> handleButtonClick());
         BorderPane.setAlignment(confirmButton, Pos.BOTTOM_LEFT);
         BorderPane.setMargin(confirmButton, new Insets(0, 5, 0, 0));
         border.setRight(confirmButton);
@@ -96,6 +101,15 @@ public class RPSClient extends Application {
 
         // Connect to server
         connectToServer();
+    }
+
+    private void handleButtonClick() {
+        // Send choice to server
+        try {
+            sendChoice();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void connectToServer() {
@@ -112,22 +126,18 @@ public class RPSClient extends Application {
             try {
                 int status = fromServer.readInt();
                 if (status == PLAYER1) {
+                    Platform.runLater(() -> playerLabel.setText("Player 1"));
                     Platform.runLater(() -> message.setText("Waiting for opponent..."));
                     fromServer.readInt(); // Read opponent choice
                     Platform.runLater(() -> message.setText("Opponent connected, game started!"));
                 } else if (status == PLAYER2) {
+                    Platform.runLater(() -> playerLabel.setText("Player 2"));
                     Platform.runLater(() -> message.setText("Connected, game started!"));
                 }
 
                 // Game loop
                 while (isActive) {
-                    if (myChoice != null) {
-                        sendChoice();
-                        receiveFromServer();
-                    } else if (opponentChoice != null) {
-                        receiveFromServer();
-                        sendChoice();
-                    }
+                    receiveFromServer();
                 }
 
             } catch (Exception e) {
@@ -160,8 +170,6 @@ public class RPSClient extends Application {
         } else if (status == DRAW) {
             Platform.runLater(() -> message.setText("Draw!"));
             isActive = false;
-        } else {
-            sendChoice();
         }
 
     }
